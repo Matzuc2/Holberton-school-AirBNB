@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
   }
+  checkAuthentication()
   });
 
   async function loginUser(email, password) {
@@ -41,3 +42,70 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Login failed: ' + response.statusText);
       }
 }
+
+function checkAuthentication() {
+  const token = getCookie('token');
+  const loginLink = document.getElementById('login-link');
+
+  if (!token) {
+      loginLink.style.display = 'block';
+  } else {
+      loginLink.style.display = 'none';
+  }
+  fetchPlaces(token);
+}
+function getCookie(name) {
+  const cookies = document.cookie.split(';');
+  for (let cookie of cookies) {
+       cookie = cookie.trim();
+       if (cookie.startsWith(name + '=')) {
+          return cookie.substring(name.length + 1);
+       }
+    }
+ return null;
+}
+
+async function fetchPlaces(token) {
+  // Make a GET request to fetch places data
+  const response = await fetch('http://127.0.0.1:5000/api/v1/places/',
+    {
+      method:'GET',
+      headers:{
+        'Content-Type': 'application/json',
+        'Authorization': "Token" + token
+      }
+    });
+      if (response.ok){
+        const data = await response.json();
+        displayPlaces(data)
+      }
+      else {
+        alert('data fecth failed: ' + response.statusText);
+      }
+
+    }
+
+function displayPlaces(places) {
+  // Clear the current content of the places list
+  let arr = document.getElementById('places-list')
+  arr.innerHTML = ""
+  places.forEach(element => {
+    let newVar = document.createElement('div')
+        newVar.innerHTML = `
+                <div class="place-card">
+                <h2 class="place-name">${element.title}</h2>
+                <p class="place-price">$${element.price}</p>
+                <button class="details-button">View Details</button>
+            </div>
+    `
+    arr.appendChild(newVar)
+  });
+  // Iterate over the places data
+  // For each place, create a div element and set its content
+  // Append the created element to the places list
+}
+
+document.getElementById('price-filter').addEventListener('change', (event) => {
+  // Get the selected price value
+  // Iterate over the places and show/hide them based on the selected price
+});
