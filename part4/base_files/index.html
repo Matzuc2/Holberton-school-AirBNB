@@ -9,7 +9,6 @@
 <body>
     <header>
         <img src="./images/logo.png" class="logo">
-        <a href="./login.html" class="login-button"></a>
         <nav>
             <a href="login.html" id="login-link">Login</a>
         </nav>
@@ -22,12 +21,26 @@
             </select>
         </section>
         <section id="places-list">
-            <!-- List of places will be populated dynamically -->
+            <div class="place-card">
+                <h2 class="place-name">Cozy Apartment</h2>
+                <p class="place-price">$100 per night</p>
+                <button class="details-button">View Details</button>
+            </div>
+            <div class="place-card">
+                <h2 class="place-name">Beach House</h2>
+                <p class="place-price">$200 per night</p>
+                <button class="details-button">View Details</button>
+            </div>
+            <div class="place-card">
+                <h2 class="place-name">Mountain Cabin</h2>
+                <p class="place-price">$150 per night</p>
+                <button class="details-button">View Details</button>
+            </div>
         </section>
     </main>
     <script src="scripts.js"></script>
+    <footer>
+        <p>All rights reserved</p>
+    </footer>
 </body>
-<footer>
-    <p>all rights reserved</p>
-</footer>
 </html>
