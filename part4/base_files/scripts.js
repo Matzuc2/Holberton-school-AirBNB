@@ -105,7 +105,19 @@ function displayPlaces(places) {
   // Append the created element to the places list
 }
 
-document.getElementById('price-filter').addEventListener('change', (event) => {
+document.getElementById('price-filter').addEventListener('change', () => {
   // Get the selected price value
-  // Iterate over the places and show/hide them based on the selected price
+  const box = document.querySelector('#price-filter');
+  const value = box.value === "All" ? Infinity : Number(box.value);
+  const priceArr = document.getElementsByClassName('place-card');
+  const newArr = Array.from(priceArr);
+  newArr.forEach(element => {
+    const new2 = element.querySelector('.place-price').textContent;
+    const new3 = Number(new2.replace("$", ""));
+    if (new3 > value) {
+      element.style.display = "none";
+    } else {
+      element.style.display = "";
+    }
+  });
 });
