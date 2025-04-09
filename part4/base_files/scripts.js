@@ -105,7 +105,7 @@ function displayPlaces(places) {
   // Append the created element to the places list
 }
 
-document.getElementById('price-filter').addEventListener('change', () => {
+document.getElementById('price-filter').addEventListener('change', (event) => {
   // Get the selected price value
   const box = document.querySelector('#price-filter');
   const value = box.value === "All" ? Infinity : Number(box.value);
