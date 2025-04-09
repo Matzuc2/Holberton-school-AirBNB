@@ -51,8 +51,8 @@ function checkAuthentication() {
       loginLink.style.display = 'block';
   } else {
       loginLink.style.display = 'none';
+      fetchPlaces(token);
   }
-  fetchPlaces(token);
 }
 function getCookie(name) {
   const cookies = document.cookie.split(';');
