@@ -112,35 +112,32 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
-        
-        owner = facade.get_user(place.owner_id) # bring the object by user id, not a string
+
+        owner = facade.get_user(place.owner_id)  # Fetch the owner object
         if not owner:
             return {'error': 'Owner not found'}, 404
 
-        amenities = []
-        for amenity_id in place.amenities:
-            amenity = facade.get_amenity(amenity_id)
-            if amenity:
-                amenities.append({
-                    'id': str(amenity.id),
-                    'name': amenity.name
-                })
+        # If place.amenities contains Amenity objects, extract their details directly
+        amenities = [{
+            'id': str(amenity.id),
+            'name': amenity.name
+        } for amenity in place.amenities]
 
         return {
-                'id': place.id,
-                'title': place.title,
-                'description': place.description,
-                'price': place.price,
-                'latitude': place.latitude,
-                'longitude': place.longitude,
-                'owner': {
-                    'id': owner.id,
-                    'first_name': owner.first_name,
-                    'last_name': owner.last_name,
-                    'email': owner.email
-                },
-                'amenities': amenities
-            }, 200
+            'id': place.id,
+            'title': place.title,
+            'description': place.description,
+            'price': place.price,
+            'latitude': place.latitude,
+            'longitude': place.longitude,
+            'owner': {
+                'id': owner.id,
+                'first_name': owner.first_name,
+                'last_name': owner.last_name,
+                'email': owner.email
+            },
+            'amenities': amenities
+        }, 200
 
 #----------------------------------------------delete method------------------------------------------------
 
