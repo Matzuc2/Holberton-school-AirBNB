@@ -5,6 +5,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const loginForm = document.getElementById('login-form');
+  const addReviewForm = document.getElementById('add-review-link');
 
   if (loginForm) {
       loginForm.addEventListener('submit', async (event) => {
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
           loginUser(email.value, password.value)
           console.log('Cookie set:', document.cookie);
         }
+
       });
   }
   checkAuthentication()
@@ -46,14 +48,41 @@ document.addEventListener('DOMContentLoaded', () => {
 function checkAuthentication() {
   const token = getCookie('token');
   const loginLink = document.getElementById('login-link');
+  // Check if the current page is place.html
+  if (window.location.pathname.includes('place.html')) {
+    const addReviewForm = document.getElementById('add-review-link');
 
-  if (!token) {
+    if (!token) {
       loginLink.style.display = 'block';
+      if (addReviewForm) addReviewForm.style.display = 'none';
+    } else {
+      loginLink.style.display = 'none';
+      if (addReviewForm) addReviewForm.style.display = 'block';
+      fetchPlaceDetails(token, getPlaceIdFromURL());
+    }
   } else {
+    if (!token) {
+      loginLink.style.display = 'block';
+    } else {
       loginLink.style.display = 'none';
       fetchPlaces(token);
+    }
   }
 }
+
+  function checkAuthenticationPlace() {
+      const token = getCookie('token');
+      const addReviewSection = document.getElementById('add-review');
+
+      if (!token) {
+          addReviewSection.style.display = 'none';
+      } else {
+          addReviewSection.style.display = 'block';
+          // Store the token for later use
+          fetchPlaceDetails(token, fe);
+      }
+  }
+
 function getCookie(name) {
   const cookies = document.cookie.split(';');
   for (let cookie of cookies) {
@@ -95,7 +124,7 @@ function displayPlaces(places) {
                 <div class="place-card">
                 <h2 class="place-name">${element.title}</h2>
                 <p class="place-price">$${element.price}</p>
-                <button class="details-button">View Details</button>
+                <button onclick="window.location.href='place.html?placeId=${element.id}';" class="details-button">View Details</button>
             </div>
     `
     arr.appendChild(newVar)
@@ -107,17 +136,68 @@ function displayPlaces(places) {
 
 document.getElementById('price-filter').addEventListener('change', (event) => {
   // Get the selected price value
-  const box = document.querySelector('#price-filter');
-  const value = box.value === "All" ? Infinity : Number(box.value);
-  const priceArr = document.getElementsByClassName('place-card');
-  const newArr = Array.from(priceArr);
-  newArr.forEach(element => {
-    const new2 = element.querySelector('.place-price').textContent;
-    const new3 = Number(new2.replace("$", ""));
-    if (new3 > value) {
+  const PriceSelect = document.querySelector('#price-filter');
+  const PriceValue = PriceSelect.value === "All" ? Infinity : Number(PriceSelect.value);
+  const PlaceCollection = document.getElementsByClassName('place-card');
+  const PlaceArr = Array.from(PlaceCollection);
+  PlaceArr.forEach(element => {
+    const StringPrice = element.querySelector('.place-price').textContent;
+    const NumberPrice = Number(StringPrice.replace("$", ""));
+    if (NumberPrice > PriceValue) {
       element.style.display = "none";
     } else {
       element.style.display = "";
     }
   });
 });
+
+
+function getPlaceIdFromURL() {
+  const params = new URLSearchParams(window.location.search); // Parse the query string
+  return params.get('placeId'); // Get the value of the 'placeId' parameter
+}
+
+async function fetchPlaceDetails(token, placeId) {
+  // Make a GET request to fetch place details
+  const response = await fetch(`http://127.0.0.1:5000/api/v1/places/${placeId}`,
+    {
+      method:'GET',
+      headers:{
+        'Content-Type': 'application/json',
+        'Authorization': "Token" + token
+      }
+    });
+      if (response.ok){
+        const data = await response.json();
+        displayPlaceDetails(data)
+      }
+      else {
+        alert('data fecth failed: ' + response.statusText);
+      }
+
+    }
+  // Include the token in the Authorization header
+  // Handle the response and pass the data to displayPlaceDetails function
+
+
+function displayPlaceDetails(place) {
+  // Clear the current content of the place details section
+  let arr = document.querySelector('#place-details');
+  let amenities = [];
+  amenities.push(place.amenities.name)
+  arr.innerHTML = "";
+  arr.innerHTML = `
+    <h2 class="place-name">${place.title}</h2>
+    <div class="place-card">
+      <p><strong>Owner:</strong> ${place.owner.first_name}</p>
+      <p><strong>Price:</strong> $${place.price}</p>
+      <p><strong>Description:</strong> ${place.description}</p>
+      <p><strong>amenities:</strong> ${amenities}</p>
+
+    </div>
+  `;
+}
+
+function addReview() {
+  alert('Add review functionality is not implemented yet.');
+}
