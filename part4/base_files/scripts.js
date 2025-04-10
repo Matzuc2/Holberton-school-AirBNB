@@ -70,18 +70,6 @@ function checkAuthentication() {
   }
 }
 
-  function checkAuthenticationPlace() {
-      const token = getCookie('token');
-      const addReviewSection = document.getElementById('add-review');
-
-      if (!token) {
-          addReviewSection.style.display = 'none';
-      } else {
-          addReviewSection.style.display = 'block';
-          // Store the token for later use
-          fetchPlaceDetails(token, fe);
-      }
-  }
 
 function getCookie(name) {
   const cookies = document.cookie.split(';');
@@ -133,8 +121,8 @@ function displayPlaces(places) {
   // For each place, create a div element and set its content
   // Append the created element to the places list
 }
-
-document.getElementById('price-filter').addEventListener('change', (event) => {
+if (window.location.pathname.includes('index.html')){
+document.getElementById('price-filter').addEventListener('change', () => {
   // Get the selected price value
   const PriceSelect = document.querySelector('#price-filter');
   const PriceValue = PriceSelect.value === "All" ? Infinity : Number(PriceSelect.value);
@@ -150,7 +138,7 @@ document.getElementById('price-filter').addEventListener('change', (event) => {
     }
   });
 });
-
+}
 
 function getPlaceIdFromURL() {
   const params = new URLSearchParams(window.location.search); // Parse the query string
@@ -180,24 +168,113 @@ async function fetchPlaceDetails(token, placeId) {
   // Handle the response and pass the data to displayPlaceDetails function
 
 
-function displayPlaceDetails(place) {
+async function displayPlaceDetails(place) {
   // Clear the current content of the place details section
   let arr = document.querySelector('#place-details');
   let amenities = [];
-  amenities.push(place.amenities.name)
+  let reviews = document.querySelector('#reviews')
+
+
+  // Iterate over the amenities and extract their names
+  place.amenities.forEach(element => {
+    amenities.push(element.name);
+  });
+  const Reviews = await getReviewsforPlace(getPlaceIdFromURL())
+  if (Reviews.length == 0){
+    reviews.innerHTML = `
+    <div class= "review-card">
+    <br>
+    <p> <strong>No reviews for this place yet.<strong></p>
+    <br>
+    </div>`
+  }
+  else{
+  Reviews.forEach(re => {
+    const star = "★"
+    const rating = star.repeat(re.rating) 
+    console.log(rating)
+    const PromiseUser = getUserDetails(re.user_id)
+    PromiseUser.then((value) =>{
+      let first_name = value.first_name;
+      let last_name = value.last_name;
+      reviews.innerHTML += `
+      <div class="review-card">
+      <p><strong>${first_name} ${last_name}:</strong></p>
+      <p>Description: ${re.text}</p>
+      <p>Rating: ${rating}</p>
+      </div>
+    `;
+    });
+  });
+}
   arr.innerHTML = "";
+  if(amenities.length !== 0){
   arr.innerHTML = `
     <h2 class="place-name">${place.title}</h2>
     <div class="place-card">
-      <p><strong>Owner:</strong> ${place.owner.first_name}</p>
+      <p><strong>Host:</strong> ${place.owner.first_name} ${place.owner.last_name}</p>
       <p><strong>Price:</strong> $${place.price}</p>
       <p><strong>Description:</strong> ${place.description}</p>
-      <p><strong>amenities:</strong> ${amenities}</p>
-
+      <p><strong>Amenities:</strong> ${amenities}</p>
     </div>
-  `;
-}
+      `
+  }else{
+    arr.innerHTML = `
+    <h2 class="place-name">${place.title}</h2>
+    <div class="place-card">
+      <p><strong>Host:</strong> ${place.owner.first_name} ${place.owner.last_name}</p>
+      <p><strong>Price:</strong> $${place.price}</p>
+      <p><strong>Description:</strong> ${place.description}</p>
+      <p><strong>Amenities</strong>: No amenities for this place</p>
+    </div>
+    `
+  }
+  };
+
+
 
 function addReview() {
   alert('Add review functionality is not implemented yet.');
+}
+
+async function getReviewsforPlace(placeId) {
+  try {
+    const response = await fetch(`http://127.0.0.1:5000/api/v1/places/${placeId}/reviews`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      return []; // Return an empty array if the response is not ok
+    }
+  } catch (error) { // Log the error for debugging
+    return []; // Return an empty array in case of a network error
+  }
+}
+
+async function getUserDetails(userId){
+  try{
+  const response = await fetch(`http://127.0.0.1:5000/api/v1/users/${userId}`,
+  {
+    method:'GET',
+    headers:{
+      'Content-Type': 'application/json',
+    }
+  });
+    if (response.ok){
+      const data = await response.json();
+      return data;
+    }
+   else {
+      return []; // Return an empty array to handle failure gracefully
+    }
+  }
+  catch (error){
+    return []; // Return empty array to prevent get error
+  }
 }
