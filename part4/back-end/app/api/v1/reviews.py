@@ -34,12 +34,12 @@ class ReviewList(Resource):
         new_user = facade.get_user(review_data['user_id'])
         current_user = get_jwt_identity()
         if place.owner_id == current_user['id']:
-            return {'error': 'You cannot create reviews for your own places'}, 400
+            return {'error': 'You cannot create reviews for your own places'}, 403
         existing_review = facade.get_review_by_user_and_place(
             user_id=review_data['user_id'], place_id=review_data['place_id']
         )
         if existing_review:
-            return {'error': 'User has already reviewed this place'}, 400
+            return {'error': 'User has already reviewed this place'}, 403
         if not new_user:
             return {'error': 'User not found'}, 404
         try:
