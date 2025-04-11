@@ -131,11 +131,10 @@ function checkAuthentication() {
     const addReviewForm = document.getElementById('review-form');
     // dont display review form if user not connected, display login link
     if (!token) {
-        alert('You must be logged in to access this page.');
-        loginLink.style.display = 'block';
-        if (addReviewForm) addReviewForm.style.display = 'none';
-        window.location.href = 'index.html'; // Redirect to the index page
-        return; // Stop further execution
+      alert('You must be logged in to access this page.');
+      loginLink.style.display = 'block';
+      if (addReviewForm) addReviewForm.style.display = 'none';
+      window.location.href = 'index.html'; // Redirect to the index page
     }
     //display review form if connected, dont display login link
      else {
