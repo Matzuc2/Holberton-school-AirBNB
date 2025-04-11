@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Place Details</title>
     <link rel="stylesheet" href="styles.css">
-    <img url="" a href="">
 </head>
 <body>
     <header>
@@ -17,38 +16,41 @@
     </header>
     <main>
         <section id="place-details">
-            <!-- Place details will be populated dynamically -->
+            <div class="place-details">
+              <p class="place-title"></p><strong>Host:</strong> First name, Last name</p>
+              <p><strong>Price:</strong> $Price</p>
+              <p><strong>Description:</strong> Description</p>
+              <p><strong>Amenities:</strong>Amenities</p>
+            </div>
         </section>
-        <h2>Reviews</h2>
+        <h2 id = "NameReview">Reviews</h2>
         <section id="reviews">
             <!-- Reviews will be populated dynamically -->
         </section>
         <section id="add-review">
             <form id="review-form">
-                <h2>Add a Review</h2>
-                <label for="review">Your Review:</label>
+                <div id="ReviewDiv">
+                <h2 id="addReview">Add a Review</h2>
+                <label for="review" id="labelReview">Your Review:</label>
                 <br>
                 <textarea id="review" name="review" required></textarea>
-                <label for="rating">Rating:</label>
+                <label for="rating" id="LabelRating">Rating:</label>
                 <select id="rating" name="rating" required>
                     <option value="Select a rating">Select a rating</option>
-                    <option value="0">0</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
                     <option value="5">5</option>
                 </select>
-                <button type="submit">Submit Review</button>
+                <button type="submit" id="SubmitButton">Submit Review</button>
+            </div>
             </form>
         </section>
-        <div id="already">
-            <p>You already reviewed this place!</p>
-        </div>
     </main>
     <script type="module" src="scripts.js"></script>
     <footer>
-        <p>All rights reserved</p>
+        <p class="Rights">©All rights reserved</p>
     </footer>
 </body>
 </html>

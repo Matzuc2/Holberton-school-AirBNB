@@ -64,6 +64,7 @@ async function submitReview(token, rating, placeId, reviewText) {
       alert('Your session has expired. Please log in again.');
       window.location.href = 'login.html'; //redirect to the login page
     }
+    console.log(JSON.stringify(data))
     //send post request with serializing the data object with JSON.stringify
     const response = await fetch('http://127.0.0.1:5000/api/v1/reviews/', {
       method: 'POST',
@@ -93,10 +94,10 @@ async function submitReview(token, rating, placeId, reviewText) {
         alert('Failed to submit review');
     }
       else if (response.status === 403) {
-        alert('rien');
+        alert('Forbidden action: You already reviewed this place or you are its owner');
       }
     else{
-      alert('fail')
+      alert('UNKNOWN ERROR');
     }
   }
 
@@ -123,7 +124,7 @@ async function submitReview(token, rating, placeId, reviewText) {
       }
 }
 
-/*------------------------------------------------------Function to display elements or not if the user is connected------------------------*/
+/*-------------------------------------------Function to display elements or not if the user is connected------------------------*/
 
 
 function checkAuthentication() {
@@ -131,7 +132,7 @@ function checkAuthentication() {
   const loginLink = document.getElementById('login-link');
   //check if the current page is place.html
   if (window.location.pathname.includes('place.html')) {
-    const addReviewForm = document.getElementById('add-review-link');
+    const addReviewForm = document.getElementById('review-form');
     // dont display review form if user not connected, display login link
     if (!token) {
       loginLink.style.display = 'block';
@@ -241,6 +242,12 @@ function getPlaceIdFromURL() {
 
 async function fetchPlaceDetails(token, placeId) {
   // Make a GET request to fetch place details
+      //function to verify if token has expired (dont work properly)
+  if (isTokenExpired(token)) {
+      localStorage.clear() //clear token from localStorage
+      alert('Your session has expired. Please log in again.');
+      window.location.href = 'login.html'; //redirect to the login page
+  }
   const response = await fetch(`http://127.0.0.1:5000/api/v1/places/${placeId}`,
     {
       method:'GET',
@@ -297,9 +304,9 @@ async function displayPlaceDetails(place) {
       //add new div element with attributes for each review 
       reviews.innerHTML += `
       <div class="review-card">
-      <p><strong>${first_name} ${last_name}:</strong></p>
-      <p>Description: ${re.text}</p>
-      <p>Rating: ${rating}</p>
+      <p><strong>${first_name} ${last_name}</strong></p>
+      <p><strong>Description:</strong> ${re.text}</p>
+      <p><strong>Rating:</strong> ${rating}</p>
       </div>
     `;
     });
@@ -310,8 +317,8 @@ async function displayPlaceDetails(place) {
   if(amenities.length !== 0){ //check if amenities list of name are not empty
   //replace content of arr (#place-details)
   arr.innerHTML = `
-    <h2 class="place-name">${place.title}</h2>
-    <div class="place-card">
+  <h2 class="place-name">${place.title}</h2>
+    <div class="place-details">
       <p><strong>Host:</strong> ${place.owner.first_name} ${place.owner.last_name}</p>
       <p><strong>Price:</strong> $${place.price}</p>
       <p><strong>Description:</strong> ${place.description}</p>
@@ -321,8 +328,8 @@ async function displayPlaceDetails(place) {
   //case if amenities are empty
   }else{
     arr.innerHTML = `
-    <h2 class="place-name">${place.title}</h2>
-    <div class="place-card">
+    <h2 class="place-title">${place.title}</h2>
+    <div class="place-details">
       <p><strong>Host:</strong> ${place.owner.first_name} ${place.owner.last_name}</p>
       <p><strong>Price:</strong> $${place.price}</p>
       <p><strong>Description:</strong> ${place.description}</p>
