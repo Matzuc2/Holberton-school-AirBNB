@@ -172,6 +172,7 @@ async function fetchPlaces(token) {
         'Authorization': "Bearer " + token
       }
     });
+    //handle response
       if (response.ok){
         const data = await response.json();
         displayPlaces(data)
@@ -189,6 +190,7 @@ function displayPlaces(places) {
   // Clear the current content of the places list
   let arr = document.getElementById('places-list')
   arr.innerHTML = ""
+  //create new divs for each element
   places.forEach(element => {
     let newVar = document.createElement('div')
         newVar.innerHTML = `
@@ -198,6 +200,7 @@ function displayPlaces(places) {
                 <button onclick="window.location.href='place.html?placeId=${element.id}';" class="details-button">View Details</button>
             </div>
     `
+    //append new divs to original list of places
     arr.appendChild(newVar)
   });
   // Iterate over the places data
@@ -207,16 +210,17 @@ function displayPlaces(places) {
 
 /*------------------------------------------------------Price filter-------------------------------------------*/
 
-if (window.location.pathname.includes('index.html')){
+if (window.location.pathname.includes('index.html')){ //verify current location
 document.getElementById('price-filter').addEventListener('change', () => {
-  // Get the selected price value
-  const PriceSelect = document.querySelector('#price-filter');
-  const PriceValue = PriceSelect.value === "All" ? Infinity : Number(PriceSelect.value);
-  const PlaceCollection = document.getElementsByClassName('place-card');
+  const PriceSelect = document.querySelector('#price-filter'); 
+  const PriceValue = PriceSelect.value === "All" ? Infinity : Number(PriceSelect.value); //retrieve value of price, select max value if default option "all" is selected, else convert the option selected to string
+  const PlaceCollection = document.getElementsByClassName('place-card'); //select all places cards from list of places
   const PlaceArr = Array.from(PlaceCollection);
+  //treat each element of place array
   PlaceArr.forEach(element => {
     const StringPrice = element.querySelector('.place-price').textContent;
-    const NumberPrice = Number(StringPrice.replace("$", ""));
+    const NumberPrice = Number(StringPrice.replace("$", "")); // convert price of a place to int by also removing the "$"
+    //hide place if its price is superior to selected option
     if (NumberPrice > PriceValue) {
       element.style.display = "none";
     } else {
@@ -245,6 +249,7 @@ async function fetchPlaceDetails(token, placeId) {
         'Authorization': "Bearer " + token
       }
     });
+    //handle response
       if (response.ok){
         const data = await response.json();
         displayPlaceDetails(data)
@@ -254,24 +259,24 @@ async function fetchPlaceDetails(token, placeId) {
       }
 
     }
-  // Include the token in the Authorization header
-  // Handle the response and pass the data to displayPlaceDetails function
 
-/*----------------------------------------------------------------------------------- function to display place details for particular place -------------------------------*/
+
+/*-----------------------------------------------function to display place details for particular place -------------------------------*/
 
 async function displayPlaceDetails(place) {
-  // Clear the current content of the place details section
+  //select section #place-details
   let arr = document.querySelector('#place-details');
   let amenities = [];
   let reviews = document.querySelector('#reviews')
 
 
-  // Iterate over the amenities and extract their names
+  //Iterate over the amenities and extract their names
   place.amenities.forEach(element => {
     amenities.push(element.name);
   });
-  const Reviews = await getReviewsforPlace(getPlaceIdFromURL())
-  if (Reviews.length === 0){
+  const Reviews = await getReviewsforPlace(getPlaceIdFromURL()) //get reviews from specific place
+  if (Reviews.length === 0){// check if there are any reviews
+    //if not replace content with default not found HTML div element
     reviews.innerHTML = `
     <div class= "review-card">
       <br>
@@ -280,13 +285,16 @@ async function displayPlaceDetails(place) {
     </div>`
   }
   else{
+  //loop through each reviews
   Reviews.forEach( re => {
     const star = "★"
-    const rating = star.repeat(re.rating) 
-    const PromiseUser = getUserDetails(re.user_id)
+    const rating = star.repeat(re.rating) //add star depending of the review rating
+    const PromiseUser = getUserDetails(re.user_id) //fetch user details
+    //if promise is fufilled
     PromiseUser.then((value) =>{
       let first_name = value.first_name;
       let last_name = value.last_name;
+      //add new div element with attributes for each review 
       reviews.innerHTML += `
       <div class="review-card">
       <p><strong>${first_name} ${last_name}:</strong></p>
@@ -297,8 +305,10 @@ async function displayPlaceDetails(place) {
     });
   });
 }
+//part for place details
   arr.innerHTML = "";
-  if(amenities.length !== 0){
+  if(amenities.length !== 0){ //check if amenities list of name are not empty
+  //replace content of arr (#place-details)
   arr.innerHTML = `
     <h2 class="place-name">${place.title}</h2>
     <div class="place-card">
@@ -308,6 +318,7 @@ async function displayPlaceDetails(place) {
       <p><strong>Amenities:</strong> ${amenities}</p>
     </div>
       `
+  //case if amenities are empty
   }else{
     arr.innerHTML = `
     <h2 class="place-name">${place.title}</h2>
@@ -332,7 +343,7 @@ async function getReviewsforPlace(placeId) {
         'Content-Type': 'application/json',
       },
     });
-
+    //handle response
     if (response.ok) {
       const data = await response.json();
       return data;
@@ -355,6 +366,7 @@ async function getUserDetails(userId){
       'Content-Type': 'application/json',
     }
   });
+  //handle response
     if (response.ok){
       const data = await response.json();
       return data;
