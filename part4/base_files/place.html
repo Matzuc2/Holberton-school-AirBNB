@@ -8,7 +8,7 @@
 </head>
 <body>
     <header>
-        <img src="./images/logo.png" class="logo">
+        <img src="./images/logo.png" class="logo" alt="Company Logo">
         <nav>
             <a href="login.html" id="login-link">Login</a>
             <a href="index.html" id="index-link">Home</a>
@@ -16,15 +16,16 @@
     </header>
     <main>
         <section id="place-details">
+            <h2 class="hidden">Place Details</h2>
             <div class="place-details">
-              <p class="place-title"></p><strong>Host:</strong> First name, Last name</p>
-              <p><strong>Price:</strong> $Price</p>
-              <p><strong>Description:</strong> Description</p>
-              <p><strong>Amenities:</strong>Amenities</p>
+                <p class="place-title"><strong>Host:</strong> First name, Last name</p>
+                <p><strong>Price:</strong> $Price</p>
+                <p><strong>Description:</strong> Description</p>
+                <p><strong>Amenities:</strong> Amenities</p>
             </div>
         </section>
-        <h2 id = "NameReview">Reviews</h2>
         <section id="reviews">
+            <h2 class="hidden">Reviews</h2> <!--hide titles of W3C validator-->
             <!-- Reviews will be populated dynamically -->
         </section>
         <section id="add-review">
@@ -36,7 +37,7 @@
                 <textarea id="review" name="review" required></textarea>
                 <label for="rating" id="LabelRating">Rating:</label>
                 <select id="rating" name="rating" required>
-                    <option value="Select a rating">Select a rating</option>
+                    <option value="" disabled selected>Select a rating</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>

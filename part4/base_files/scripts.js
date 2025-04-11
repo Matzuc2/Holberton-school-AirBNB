@@ -25,13 +25,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const token = getCookie('token'); // get token for review submission (to assure review's writer is connected)
   const placeId = getPlaceIdFromURL(); //get placeId here to add it as parameter in submitReview
 
+
   if (reviewForm) {
       reviewForm.addEventListener('submit', async (event) => {
           event.preventDefault();
         let text = document.getElementById("review");
         const textContent = text.value; //retrieve text from textarea for review submitReview parameter
         let rating = document.getElementById("rating");
-        if (rating.value === "Select a rating"){
+        if (rating.value === ""){
           alert("You have to select a rating !") // edge case if rating is on default
         }
         else
@@ -90,14 +91,9 @@ async function submitReview(token, rating, placeId, reviewText) {
         const reviewForm = document.getElementById('review-form');
         reviewForm.innerHTML = "";
 //error cases
-    } else if(response.status === 400) {
-        alert('Failed to submit review');
     }
-      else if (response.status === 403) {
-        alert('Forbidden action: You already reviewed this place or you are its owner');
-      }
     else{
-      alert('UNKNOWN ERROR');
+      alert('Failed to submit review');
     }
   }
 
@@ -135,8 +131,11 @@ function checkAuthentication() {
     const addReviewForm = document.getElementById('review-form');
     // dont display review form if user not connected, display login link
     if (!token) {
-      loginLink.style.display = 'block';
-      if (addReviewForm) addReviewForm.style.display = 'none';
+        alert('You must be logged in to access this page.');
+        loginLink.style.display = 'block';
+        if (addReviewForm) addReviewForm.style.display = 'none';
+        window.location.href = 'index.html'; // Redirect to the index page
+        return; // Stop further execution
     }
     //display review form if connected, dont display login link
      else {

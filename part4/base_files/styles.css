@@ -53,6 +53,7 @@ main {
     border: 1px solid #ddd;
     border-radius: 10px;
     margin: 0 auto;
+    margin-bottom: 10px;
     background-color: rgb(255, 255, 255);
     transition: all 0.4s ease 0s;
     width: fit-content;
@@ -179,7 +180,7 @@ textarea {
       outline-width: 0;
   }
 
-#LabelRating, #rating, #Log{
+#LabelRating, #rating, #log{
     margin-bottom: 10px;
 }
 
@@ -254,3 +255,30 @@ input{
     font-size: 16px;
 }
 
+#Log{
+    background-color: #6e3e3e; /* Green */
+    border:#000000;
+    border-radius: 5px;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease; 
+    }
+
+#Log:hover {
+    background-color: #8b5e5e; /* Slightly lighter shade */
+    transform: scale(1.1); /* Slightly enlarge the button */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Add a shadow effect */
+}
+
+#index-link{
+    margin-left: 50px;
+}
+
+.hidden{
+    display: none;
+}
